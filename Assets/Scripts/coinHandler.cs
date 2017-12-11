@@ -13,11 +13,13 @@ public class coinHandler : MonoBehaviour {
     }
     private void FixedUpdate()
     {
-        if (!PlayerManager.Instance.isPlaying)
+        if (!ChooseCharacter.PlayerManagerInstance.isPlaying)
             return;
         transform.Translate(Vector3.down * fallSpeed * Time.deltaTime);
         if (transform.position.y <= player.position.y - 5)
         {
+            if(name.Contains("coin"))
+                ChooseCharacter.PlayerManagerInstance.coinsLeft++;
             Destroy(gameObject);
         }
     }

@@ -8,7 +8,7 @@ public class BgHandler : MonoBehaviour
     public float scrollSpeed = 10f;
     private void FixedUpdate()
     {
-        if (!PlayerManager.Instance.isPlaying)
+        if (!ChooseCharacter.PlayerManagerInstance.isPlaying)
             return;
 
         if (transform.position.y <= -45)
