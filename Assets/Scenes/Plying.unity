@@ -6296,11 +6296,11 @@ MonoBehaviour:
   timerViewWin: {fileID: 1496730637}
   bestTimerViewWin: {fileID: 751084830}
   timer: 0
+  blackScreen: {fileID: 847619751}
   hudPanel: {fileID: 85469905}
   lostPanel: {fileID: 813432513}
   winPanel: {fileID: 580522999}
   betweenLevelsPanel: {fileID: 695882489}
-  blackScreen: {fileID: 847619751}
 --- !u!1 &2027441307
 GameObject:
   m_ObjectHideFlags: 0

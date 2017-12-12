@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 [RequireComponent(typeof(CanvasGroup))]
 public class AlphaUI : MonoBehaviour
-{ //I DID A VOICE EXPLAIN OVER THIS. CHECK IT ON THIS LINK: https://1drv.ms/v/s!ArjGRsCYX8tkgepGibjSfpxpGor9oQ
+{ //I DID A VOICE EXPLAIN OVER THIS. CHECK IT OUT ON THIS LINK: https://1drv.ms/v/s!ArjGRsCYX8tkgepGibjSfpxpGor9oQ
     public float duration; 
 	private bool work = false;
 	private CanvasGroup cg;
