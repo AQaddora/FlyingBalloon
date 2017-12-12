@@ -8,7 +8,7 @@ public class PlayerManager : MonoBehaviour {
     public static PlayerManager Instance;
     public int score = 0;
     public int coinsLeft = 0;
-    public AudioClip coinHitEffect, starHitEffect, movementSfx;
+    public AudioClip coinHitEffect, starHitEffect, movementSfx, shieldGetEffect, shieldFinishedSFX;
 	public float speed= 10;
     private int tries = 3;
     private bool coolDown = true;
@@ -26,24 +26,26 @@ public class PlayerManager : MonoBehaviour {
         if (score >= 40 && LevelHandler.levelIndex == 0)
         {
             score = 0;
+			UiManager.Instance.BetweenLevels();
             UiManager.Instance.UpdateScore(score);
-            LevelHandler.Instance.LoadNextLevel();
+			LevelHandler.Instance.EraseAllLevels(); ;
         }
         else if (score >= 50 && LevelHandler.levelIndex == 1)
         {
-            score = 0;
-            UiManager.Instance.UpdateScore(score);
-            LevelHandler.Instance.LoadNextLevel();
-        }
+			score = 0;
+			UiManager.Instance.BetweenLevels();
+			UiManager.Instance.UpdateScore(score);
+			LevelHandler.Instance.EraseAllLevels(); ;
+		}
         else if (score >= 60 && LevelHandler.levelIndex == 2)
         {
-            UiManager.Instance.EndShow();
-            UiManager.Instance.UpdateScore(score);
-            UiManager.Instance.UpdateTimer();
+			UiManager.Instance.UpdateScore(score);
+			UiManager.Instance.UpdateTimer();
+			UiManager.Instance.Win();
         }
 
         if (coinsLeft + score >= 70)
-            UiManager.Instance.EndShow();
+            UiManager.Instance.Lose();
 
         if(Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow))
         {
@@ -99,12 +101,13 @@ public class PlayerManager : MonoBehaviour {
             tries--;
             if (tries == -1)
             {
-                UiManager.Instance.EndShow();
+                UiManager.Instance.Lose();
             }
         }
         else if (other.name.Contains("Shield"))
         {
             transform.GetChild(0).gameObject.SetActive(true);
+			UiManager.Instance.audioSource.PlayOneShot(shieldGetEffect);
             Invoke("DestroyShield", 5);
             Destroy(other.gameObject);
         }
@@ -113,7 +116,8 @@ public class PlayerManager : MonoBehaviour {
 
     public void DestroyShield()
     {
-        CancelInvoke();
+		UiManager.Instance.audioSource.PlayOneShot(shieldFinishedSFX);
+		CancelInvoke();
         transform.GetChild(0).gameObject.SetActive(false);
     }
     void ResetCoolDown()

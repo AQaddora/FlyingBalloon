@@ -8,11 +8,10 @@ public class UiManager : MonoBehaviour
 {
     public static UiManager Instance;
     public AudioSource audioSource;
-    public Text scoreView, TimerView, bestTimerView, timerViewEnd, bestTimerViewEnd;
+    public Text scoreView, TimerView, bestTimerView, timerViewLose, timerViewBetween, timerViewWin, bestTimerViewWin;
     public float timer = 0;
-    public AlphaUI endPanel, hudPanel;
+    public AlphaUI hudPanel, lostPanel, winPanel, betweenLevelsPanel;
     public AlphaUI blackScreen;
-
     private string timerString, bestTimerString;
 
     private void Awake()
@@ -47,9 +46,23 @@ public class UiManager : MonoBehaviour
     }
     public void Start_OnClick()
     {
-        LevelHandler.Instance.LoadLevelOne();
+        LevelHandler.Instance.LoadLevelByIndex(0);
         ChooseCharacter.PlayerManagerInstance.isPlaying = true;
     }
+
+	public void NextLevelOnClick()
+	{
+		PlayerManager.Instance.isPlaying = true;
+		LevelHandler.Instance.LoadLevelByIndex(++LevelHandler.levelIndex);
+		betweenLevelsPanel.Hide();
+		hudPanel.Show();
+	}
+
+	public void Quit()
+	{
+		Application.Quit();
+		UnityEditor.EditorApplication.isPlaying = false;
+	}
 
     public void AudioToggle(bool toggle)
     {
@@ -61,18 +74,35 @@ public class UiManager : MonoBehaviour
         scoreView.text = "Score: " + score;
     }
 
-    public void EndShow()
-    {
-        bestTimerViewEnd.text = bestTimerString;
-        timerViewEnd.text = timerString;
-        ChooseCharacter.PlayerManagerInstance.isPlaying = false;
-        hudPanel.Hide();
-        endPanel.Show();
-    }
+	public void Lose()
+	{
+		PlayerManager.Instance.isPlaying = false;
+		timerViewLose.text = timerString;
+		lostPanel.Show();
+		hudPanel.Hide();
+	}
+	public void Win()
+	{
+		Debug.Log("YouWon!!");
+		PlayerManager.Instance.isPlaying = false;
+		bestTimerViewWin.text = bestTimerString;
+		timerViewWin.text = timerString;
+		winPanel.Show();
+		hudPanel.Hide();
+	}
+
+	public void BetweenLevels()
+	{
+		PlayerManager.Instance.isPlaying = false;
+		timerViewBetween.text = timerString;
+		betweenLevelsPanel.Show();
+		hudPanel.Hide();
+	}
+
     public void HomeButton_OnClick()
     {
         blackScreen.Show();
-        Invoke("Reload", endPanel.duration);
+        Invoke("Reload", lostPanel.duration);
     }
 
     void Reload()
