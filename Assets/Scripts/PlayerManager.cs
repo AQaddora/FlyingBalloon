@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 //Hence the name. manages the player..
 public class PlayerManager : MonoBehaviour
 {
+	public Slider timerForShield;
+	bool shieldIsOn = false;
     public static PlayerManager Instance;//make an instance of this script.
     public int score = 0; //SCORE!? WHAT IS SCORE!? >_<
     public int coinsLeft = 0;//need to know this. to add it to score and if the sum is 70. then lose();
@@ -26,27 +28,37 @@ public class PlayerManager : MonoBehaviour
 
     void Update()
 	{
+		if (shieldIsOn)
+		{
+			timerForShield.GetComponent<AlphaUI>().Show();
+			timerForShield.value -= Time.fixedDeltaTime;
+			if (timerForShield.value <= 0)
+			{
+				DestroyShield();
+				CancelInvoke();
+			}
+		}
         if (!isPlaying)//return if blah blah
             return;
 
-        if (score >= 40 && LevelHandler.levelIndex == 0)//first level condition to pass. 40 coins. 
+        if (score >= 20 && LevelHandler.levelIndex == 0)//first level condition to pass. 40 coins. 
         {
             score = 0;//reset score.
 
 			//Quick tip: if you are on visual studio. right click on any called method in the callee,
 			//choose "GoToDefinition" to see where it actually is and what it does try it with the next method "BetweenLevels()".
-			UiManager.Instance.BetweenLevels();//show the between levels. call the Instance of UiManager.
+			UiManager.Instance.BetweenLevels("You completed Level One in " + UiManager.Instance.timerString + " seconds . Press continue to complete your challenge!");//show the between levels. call the Instance of UiManager.
             UiManager.Instance.UpdateScore(score);//update what???!
 			LevelHandler.Instance.EraseAllLevels(); //erase to be so sure about it
         }
-        else if (score >= 50 && LevelHandler.levelIndex == 1)//same things but lvl 2 50 coins.
+        else if (score >= 40 && LevelHandler.levelIndex == 1)//same things but lvl 2 50 coins.
         {
 			score = 0;
-			UiManager.Instance.BetweenLevels();
+			UiManager.Instance.BetweenLevels("You completed Level Two in "+ UiManager.Instance.timerString +" seconds . Press continue to complete your challenge!");
 			UiManager.Instance.UpdateScore(score);
 			LevelHandler.Instance.EraseAllLevels(); ;
 		}
-        else if (score >= 60 && LevelHandler.levelIndex == 2)//level 3 and 60 coins, hard to believe this but they won. xD
+        else if (score >= 50 && LevelHandler.levelIndex == 2)//level 3 and 60 coins, hard to believe this but they won. xD
         {
 			UiManager.Instance.UpdateScore(score);
 			UiManager.Instance.UpdateTimer();
@@ -122,6 +134,7 @@ public class PlayerManager : MonoBehaviour
         }
         else if (other.name.Contains("Shield"))//if the hit obj was Shield
         {
+			shieldIsOn = true;
             transform.GetChild(0).gameObject.SetActive(true);//activate the child transform which is always the shield. "it was there all the time xD"
 			UiManager.Instance.audioSource.PlayOneShot(shieldGetEffect);//play the effect.
             Invoke("DestroyShield", 5);//Destroy the shield after 5 seconds.
@@ -132,6 +145,8 @@ public class PlayerManager : MonoBehaviour
 
     public void DestroyShield()
     {
+		shieldIsOn = false;
+		timerForShield.GetComponent<AlphaUI>().Hide();
 		UiManager.Instance.audioSource.PlayOneShot(shieldFinishedSFX);
         transform.GetChild(0).gameObject.SetActive(false);//Set the thing back false
     }

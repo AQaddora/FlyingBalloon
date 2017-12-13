@@ -36,7 +36,7 @@ public class LevelHandler : MonoBehaviour {
             shield.SetParent(parent);//the line above instantiates and instance of the prefab and position it at that position.
             lastYShield += yDifCoin;//the new possiple position of our next shield
         }
-        for (int i = 0; i < 71; i++)//same as shields but larger number
+        for (int i = 0; i < 81; i++)//same as shields but larger number
         {
             float yDifCoin = Random.Range(5, 8);
             float xPosCoin = Random.Range(-7, 7);
@@ -85,12 +85,12 @@ public class LevelHandler : MonoBehaviour {
         float lastYStar = 5;
         for (int i = 0; i < 300; i++)
         {
-            float yDifStar = Random.Range(3, 6);
+            float yDifStar = Random.Range(4, 7);
             float xPosStar = Random.Range(-7, 7);
             Transform starNew = starPrefab[starIndex];
             Transform star = (Transform) Instantiate(starNew, new Vector3(xPosStar, lastYStar + yDifStar, 0), Quaternion.identity);
             star.localScale = Vector3.one * Random.Range(1, 1.4f);
-            star.GetComponentInChildren<coinHandler>().fallSpeed = 7;
+            star.GetComponentInChildren<coinHandler>().fallSpeed = 6;
             star.SetParent(parent);
             lastYStar += yDifStar;
         }
@@ -110,7 +110,7 @@ public class LevelHandler : MonoBehaviour {
             shield.SetParent(parent);
             lastYShield += yDifCoin;
         }
-        for (int i = 0; i < 71; i++)
+        for (int i = 0; i < 61; i++)
         {
             float yDifCoin = Random.Range(5, 8);
             float xPosCoin = Random.Range(-7, 7);
@@ -127,7 +127,7 @@ public class LevelHandler : MonoBehaviour {
             Transform starNew = starPrefab[starIndex];
             Transform star = (Transform) Instantiate(starNew, new Vector3(xPosStar, lastYStar + yDifStar, 0), Quaternion.identity);
             star.localScale = Vector3.one * Random.Range(1.2f, 1.7f);
-            star.GetComponentInChildren<coinHandler>().fallSpeed = 9;
+            star.GetComponentInChildren<coinHandler>().fallSpeed = 7;
             star.SetParent(parent);
             lastYStar += yDifStar;
         }
@@ -136,15 +136,16 @@ public class LevelHandler : MonoBehaviour {
 	//to load the same running level again, we erase everything then start from scratch.
     public void LoadSameLevel()
     {
-        UiManager.Instance.audioSource.PlayOneShot(preLevelEffect);//play the effect of prelevel.
+		Invoke("HideLevelView", 2);
+		UiManager.Instance.audioSource.PlayOneShot(preLevelEffect);//play the effect of prelevel.
         EraseAllLevels();
         LoadLevelByIndex(levelIndex);//call another method.
     }
     public void LoadNextLevel()
     {
         UiManager.Instance.audioSource.PlayOneShot(nextLevelEffect);//play the effect.
-
-        EraseAllLevels();
+		Invoke("HideLevelView", 2);
+		EraseAllLevels();
         if (levelIndex != 2) //check if we aren't already at the last level.
             LoadLevelByIndex(levelIndex + 1);//if we aren't load the level that is next.
     }

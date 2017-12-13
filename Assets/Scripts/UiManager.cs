@@ -7,18 +7,20 @@ using UnityEngine.SceneManagement;
 //This script is responsible for most of the Ui elements management OnClicks and stuff.
 public class UiManager : MonoBehaviour
 {
+	public Text betweenLevelsText;
+	public AudioClip loseEffect, winEffect;
     public static UiManager Instance; //making an instance of this script so we can access public variables and methods from other scripts.
     public AudioSource audioSource; //This is the only audio source in the game, we currently play music on it. and we use it to play effects. 
 	
 	//now these are all the Text components that are gonna be updated during the game.
-	public Text scoreView, TimerView, bestTimerView, timerViewLose, timerViewBetween, timerViewWin, bestTimerViewWin;
+	public Text scoreView, TimerView, bestTimerView, timerViewLose, timerViewWin, bestTimerViewWin;
 
 	public float timer = 0; //here is our timer. it's gonna be increased by one each single second.
 
 	//these are all the Instances of the AlphaUI script on our panels. so we can show and hide panels
-	public AlphaUI blackScreen, hudPanel, lostPanel, winPanel, betweenLevelsPanel;
+	public AlphaUI blackScreen, hudPanel, lostPanel, winPanel, betweenLevelsPanel, pausePanel;
 
-    private string timerString, bestTimerString; //we use this to store the formated string, and use it in all the Texts related
+    public string timerString, bestTimerString; //we use this to store the formated string, and use it in all the Texts related
 
     private void Awake()
     {
@@ -103,8 +105,23 @@ public class UiManager : MonoBehaviour
         scoreView.text = "Score: " + score;
     }
 
+	public void PauseButtonOnClick()
+	{
+		PlayerManager.Instance.isPlaying = false;
+		hudPanel.Hide();
+		pausePanel.Show();
+	}
+
+	public void ContinueAfterPause()
+	{
+		pausePanel.Hide();
+		hudPanel.Show();
+		PlayerManager.Instance.isPlaying = true;
+	}
+
 	public void Lose()//losers come here a lot.
 	{
+		audioSource.PlayOneShot(loseEffect);
 		PlayerManager.Instance.isPlaying = false;//firstly set the isPlaying to false.
 		timerViewLose.text = timerString;//show the timer in the lostPanel.
 		lostPanel.Show();//show the lost, and hide the hud unneeded tho I think
@@ -112,6 +129,7 @@ public class UiManager : MonoBehaviour
 	}
 	public void Win()//rarly gets called. when a weird little boy wins.
 	{
+		audioSource.PlayOneShot(winEffect);
 		PlayerManager.Instance.isPlaying = false;//same as lost nearly.. no need to explain all of it again. lazy! ;D
 		bestTimerViewWin.text = bestTimerString;
 		timerViewWin.text = timerString;
@@ -119,10 +137,10 @@ public class UiManager : MonoBehaviour
 		hudPanel.Hide();
 	}
 
-	public void BetweenLevels()//this gets called when he passes a level. specifically in PlayerManagerScript >> Update method. 
+	public void BetweenLevels(string text)//this gets called when he passes a level. specifically in PlayerManagerScript >> Update method. 
 	{
+		betweenLevelsText.text = text;
 		PlayerManager.Instance.isPlaying = false;//still the same things most likely.
-		timerViewBetween.text = timerString;
 		betweenLevelsPanel.Show();
 		hudPanel.Hide();
 	}
