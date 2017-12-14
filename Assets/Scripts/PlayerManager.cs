@@ -21,10 +21,14 @@ public class PlayerManager : MonoBehaviour
     public bool isPlaying = false;//the major controller of the game.
     public Image[] triesView;//three hearts on the top of screen.
 
-    private void Awake()
+	private float minX, maxX;
+	private void Awake()
     {
         Instance = this;
-    }
+		minX = Camera.main.ViewportToWorldPoint(Vector3.zero).x + transform.localScale.x;
+		maxX = Camera.main.ViewportToWorldPoint(Vector3.one).x - transform.localScale.x;
+
+	}
 
     void Update()
 	{
@@ -83,7 +87,7 @@ public class PlayerManager : MonoBehaviour
         transform.Translate (Vector3.right * speed * Time.deltaTime * Input.GetAxis ("Horizontal"));
 
 		//clamp the position of the balloon to stay in the screen.
-		transform.position =new Vector3( Mathf.Clamp (transform.position.x,-7.5f,7.5f) ,transform.position.y,transform.position.z);
+		transform.position =new Vector3( Mathf.Clamp (transform.position.x,minX, maxX) ,transform.position.y,transform.position.z);
 	}
 
     void OnTriggerEnter2D(Collider2D other)//gets called when the player hits another collider.. NOTE:: the rigidbody2D component is very important for this to be called.
@@ -149,8 +153,9 @@ public class PlayerManager : MonoBehaviour
 		timerForShield.GetComponent<AlphaUI>().Hide();
 		UiManager.Instance.audioSource.PlayOneShot(shieldFinishedSFX);
         transform.GetChild(0).gameObject.SetActive(false);//Set the thing back false
-    }
-    void ResetCoolDown()//R E S E T  C O O L D O W N
+		timerForShield.value = 5;
+	}
+	void ResetCoolDown()//R E S E T  C O O L D O W N
     {
         coolDown = true;
     }
